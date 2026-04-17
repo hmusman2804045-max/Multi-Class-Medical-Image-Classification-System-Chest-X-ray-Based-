@@ -9,7 +9,7 @@ def main():
     DATA_DIR = "dataset/train"
     IMAGE_SIZE = (224, 224)
     BATCH_SIZE = 32
-    EPOCHS = 1
+    EPOCHS = 15
     MODEL_SAVE_PATH = "models/medical_resnet_v1.h5"
     LOGS_PATH = "logs/training_log.csv"
     
@@ -46,7 +46,7 @@ def main():
     model = build_resnet_model(
         input_shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 3),
         num_classes=num_classes,
-        fine_tune_layers=0
+        fine_tune_layers=20
     )
 
     callbacks = [
@@ -59,7 +59,7 @@ def main():
         ),
         EarlyStopping(
             monitor='val_loss',
-            patience=3,
+            patience=5,
             restore_best_weights=True,
             verbose=1
         ),

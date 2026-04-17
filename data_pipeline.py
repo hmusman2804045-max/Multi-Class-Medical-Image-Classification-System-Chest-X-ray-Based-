@@ -29,7 +29,8 @@ def create_data_pipelines(data_dir, image_size=(224, 224), batch_size=32, valida
     print(f"Classes detected: {class_names}\n")
 
     data_augmentation = tf.keras.Sequential([
-        layers.RandomRotation(factor=0.05, fill_mode='nearest'),
+        layers.RandomFlip("horizontal"),
+        layers.RandomRotation(factor=0.1, fill_mode='nearest'),
         layers.RandomZoom(height_factor=(-0.05, 0.05), width_factor=(-0.05, 0.05), fill_mode='nearest'),
         layers.RandomTranslation(height_factor=0.05, width_factor=0.05, fill_mode='nearest'),
         layers.RandomBrightness(factor=0.1)

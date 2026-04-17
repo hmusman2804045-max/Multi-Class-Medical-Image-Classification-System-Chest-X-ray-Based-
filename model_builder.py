@@ -21,12 +21,12 @@ def build_resnet_model(input_shape=(224, 224, 3), num_classes=4, fine_tune_layer
         layers.GlobalAveragePooling2D(name="Global_Avg_Pool"),
         layers.Dropout(0.5, name="Dropout_1"),
         layers.Dense(256, activation='relu', name="Dense_1"),
-        layers.Dropout(0.3, name="Dropout_2"),
+        layers.Dropout(0.5, name="Dropout_2"),
         layers.Dense(num_classes, activation='softmax', name="Output_Classification")
     ], name="Medical_ResNet50")
     
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),
+        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),
         loss='categorical_crossentropy',
         metrics=['accuracy', tf.keras.metrics.AUC(name='auc')]
     )
