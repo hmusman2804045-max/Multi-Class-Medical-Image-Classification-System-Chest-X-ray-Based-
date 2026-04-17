@@ -1,40 +1,39 @@
 # Multi-Class Medical Image Classification System (Chest X-ray Based)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
-![TensorFlow](https://img.shields.io/badge/tensorflow-2.10%2B-orange.svg)
+![Python](https://img.shields.io/badge/python-3.12-blue.svg)
+![TensorFlow](https://img.shields.io/badge/tensorflow-2.15%2B-orange.svg)
 
 ## Overview
-This repository contains a professional deep learning pipeline for multi-class classification of medical images, specifically focused on Chest X-rays. The system utilizes a fine-tuned ResNet50 architecture to classify X-rays into diagnostic categories: **COVID-19, Normal, Pneumonia, and Tuberculosis**.
+This repository contains a professional deep learning pipeline for multi-class classification of Chest X-rays. The system leverages a fine-tuned **ResNet50** architecture to classify images into four diagnostic categories: **COVID-19, Normal, Pneumonia, and Tuberculosis**.
 
 ## Key Features
-- **Robust Data Pipeline**: Optimized TensorFlow data loading with built-in augmentation (rotation, zoom, translation, brightness) and automated normalization (+ [Rescaling](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Rescaling)).
-- **Architectural Excellence**: Transfer learning implementation using **ResNet50** with configurable fine-tuning depth and Global Average Pooling.
-- **Class Imbalance Handling**: Automated calculation of class weights to ensure minority classes like Tuberculosis are properly weighted during training.
-- **Advanced Callbacks**: Integrated `ModelCheckpoint`, `EarlyStopping`, `ReduceLROnPlateau`, and `CSVLogger` for robust training management.
-- **Performance Optimized**: Integration of `tf.data.AUTOTUNE` and prefetching for maximum CPU/GPU utilization.
-- **Evaluation Metrics**: Tracks Accuracy and AUC (Area Under Curve) for balanced diagnostic assessment.
+- **Dynamic Fine-Tuning**: Configurable unfreezing of backbone layers to specialize the model for medical features.
+- **Robust Data Pipeline**: Optimized TensorFlow data loading with advanced augmentation (Horizontal Flip, Rotation, Zoom, Brightness).
+- **Overfitting Prevention**: Implemented strong regularization using **0.5 Dropout** and adaptive learning rates.
+- **Visualization Tools**: Real-time evaluation script to compare **Actual vs. Predicted** labels on test images.
+- **Class Imbalance Handling**: Automatic class weighting to ensure minority classes (e.g., Tuberculosis) are properly prioritized.
 
 ## Project Structure
-- `train.py`: The main entry point for executing model training, managing callbacks, and class weights.
+- `train.py`: Main entry point for model training and fine-tuning.
 - `data_pipeline.py`: Handles dataset loading, augmentation, and preprocessing.
-- `model_builder.py`: Defines the ResNet50-based model architecture and compilation logic.
-- `requirements.txt`: List of dependencies required to run the project.
-- `LICENSE`: MIT License information.
+- `model_builder.py`: Defines the ResNet50-based model architecture.
+- `visualize_results.py`: Utility to display sample predictions and model performance visually.
+- `smoke_test.py`: Lightweight script to verify the entire pipeline in under 60 seconds.
+- `requirements.txt`: Project dependencies.
 
 ## Installation & Setup
 
-### 1. Prerequisites
-Ensure you have Python 3.8+ installed.
-
-### 2. Dependencies
-Install the required packages using the provided `requirements.txt`:
+### 1. Environment
+We recommend using Python 3.12 within a virtual environment:
 ```bash
+python -m venv venv
+.\venv\Scripts\Activate
 pip install -r requirements.txt
 ```
 
-### 3. Dataset Configuration
-While the full dataset is not included in this repository due to size constraints, the system expects a directory structure as follows:
+### 2. Dataset Configuration
+The system expects the following directory structure:
 ```
 dataset/
 └── train/
@@ -43,33 +42,31 @@ dataset/
     ├── pneumonia/
     └── tuberculosis/
 ```
-The pipeline automatically detects class names and counts from the folder structure.
 
 ## Usage
 
-### To begin training:
+### Stage 1: Verification
+Run the smoke test to ensure your environment and data paths are correct:
 ```bash
-python train.py
-```
-This will:
-1. Initialize the data pipelines.
-2. Build the ResNet50 model with a frozen base.
-3. Calculate class weights based on the dataset distribution.
-4. Execute training with performance-tracking callbacks.
-
-### To test the data pipeline:
-```bash
-python data_pipeline.py
+.\venv\Scripts\python smoke_test.py
 ```
 
-### To visualize the model architecture:
+### Stage 2: Training & Fine-Tuning
+Execute the main training script. The current configuration is optimized for **Stage 2 Fine-Tuning** (Unfrozen layers + 1e-5 Learning Rate):
 ```bash
-python model_builder.py
+.\venv\Scripts\python train.py
 ```
 
-## Outputs
-- **Models**: Saved in the `models/` directory (e.g., `medical_resnet_v1.h5`).
-- **Logs**: Training metrics are recorded in `logs/training_log.csv`.
+### Stage 3: Visualization
+After training, evaluate the model's performance on random validation samples:
+```bash
+.\venv\Scripts\python visualize_results.py
+```
+
+## Performance Logs
+- **Models**: Saved in `models/medical_resnet_v1.h5`.
+- **Metrics**: Detailed per-epoch logs available in `logs/training_log.csv`.
+- **Visuals**: Latest prediction samples saved in `logs/latest_visualization.png`.
 
 ## License
 Distributed under the MIT License. See `LICENSE` for more information.
