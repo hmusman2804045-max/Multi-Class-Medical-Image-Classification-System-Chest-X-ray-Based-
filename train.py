@@ -42,12 +42,28 @@ def main():
     
     print(f"Calculated Class Weights: {class_weight}")
 
-    print("--- Building Model (ResNet50 Base Frozen) ---")
-    model = build_resnet_model(
-        input_shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 3),
-        num_classes=num_classes,
-        fine_tune_layers=20
-    )
+    if os.path.exists(MODEL_SAVE_PATH):
+        print(f"--- Resuming from Best Model: {MODEL_SAVE_PATH} (Phase 3 Refinement) ---")
+        model = tf.keras.models.load_model(MODEL_SAVE_PATH)
+        # We lower the unfreeze count to 10 for maximum stability
+        print("Set fine_tune_layers to 10 for stability.")
+        model.trainable = True
+        for layer in model.layers[0].layers[:-10]:
+            layer.trainable = False
+            
+        print("Re-compiling model for stability...")
+        model.compile(
+            optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),
+            loss='categorical_crossentropy',
+            metrics=['accuracy', tf.keras.metrics.AUC(name='auc')]
+        )
+    else:
+        print("--- Building New Model (Phase 2 Fine-Tuning) ---")
+        model = build_resnet_model(
+            input_shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 3),
+            num_classes=num_classes,
+            fine_tune_layers=10
+        )
 
     callbacks = [
         ModelCheckpoint(
@@ -70,10 +86,10 @@ def main():
             min_lr=1e-6,
             verbose=1
         ),
-        CSVLogger(LOGS_PATH)
+        CSVLogger(LOGS_PATH, append=True)
     ]
 
-    print(f"--- Starting Training on CPU (Epochs: {EPOCHS}) ---")
+    print(f"--- Starting Refinement on CPU (Epochs: {EPOCHS}) ---")
     history = model.fit(
         train_ds,
         validation_data=val_ds,
