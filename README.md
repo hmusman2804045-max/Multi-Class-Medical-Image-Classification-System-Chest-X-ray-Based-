@@ -48,6 +48,11 @@ To visualize results after training:
 .\venv\Scripts\python visualize_results.py
 ```
 
+## Visualization Results
+Below is a sample of the model's performance on the validation set. The labels show the **Actual Diagnosis** vs. the **AI's Prediction** with confidence scores.
+
+![Latest Prediction Sample](results/latest_prediction.png)
+
 ## Results Summary
 - **Accuracy**: 80.57%
 - **Loss (Val)**: 0.47 (Stable)
