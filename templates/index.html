@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthScan AI | Chest X-Ray Diagnostic Portal</title>
+    <meta name="description" content="AI-powered Chest X-Ray diagnostic system. Detects COVID-19, Pneumonia, Tuberculosis, and Normal conditions with visual explanations.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Slim Disclaimer Bar -->
+    <div class="disclaimer-bar" id="disclaimer-bar">
+        <span class="disc-icon">⚕️</span>
+        <span><strong>Clinical Notice:</strong> This AI tool assists qualified medical professionals only. Always consult a licensed physician before any clinical decision.</span>
+        <button class="disc-close" onclick="this.parentElement.style.display='none'" aria-label="Dismiss">✕</button>
+    </div>
+
+    <div class="app-shell">
+
+        <!-- ═══════════════════════════════ SIDEBAR ═══════════════════════════════ -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-mark">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                </div>
+                <div class="logo-text">Health<strong>Scan</strong> <span class="logo-ai">AI</span></div>
+            </div>
+
+            <nav>
+                <p class="nav-label">NAVIGATION</p>
+                <a class="nav-item active" href="#">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                    Dashboard
+                </a>
+                <a class="nav-item" href="#">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    New Scan
+                </a>
+                <a class="nav-item" href="#">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    Reports
+                </a>
+                <p class="nav-label" style="margin-top:1.5rem">SYSTEM</p>
+                <a class="nav-item" href="#">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+                    Settings
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="engine-status">
+                    <div class="engine-dot"></div>
+                    <div>
+                        <div class="engine-label">AI Engine Online</div>
+                        <div class="engine-sub">ResNet50 · 80.57% Accuracy</div>
+                    </div>
+                </div>
+                <div class="class-tags">
+                    <span class="tag covid">COVID-19</span>
+                    <span class="tag normal">Normal</span>
+                    <span class="tag pneu">Pneumonia</span>
+                    <span class="tag tb">Tuberculosis</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ═══════════════════════════════ MAIN ═══════════════════════════════ -->
+        <main class="main">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Diagnostic Analysis</h1>
+                    <p class="page-sub">Upload a chest X-ray for AI-powered real-time classification with visual explainability</p>
+                </div>
+                <div class="header-chip">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    HIPAA Compliant
+                </div>
+            </div>
+
+            <!-- Stat Strip -->
+            <div class="stat-strip">
+                <div class="stat"><span class="sv">80.57%</span><span class="sl">Model Accuracy</span></div>
+                <div class="sep"></div>
+                <div class="stat"><span class="sv">4</span><span class="sl">Disease Classes</span></div>
+                <div class="sep"></div>
+                <div class="stat"><span class="sv">224×224</span><span class="sl">Input Resolution</span></div>
+                <div class="sep"></div>
+                <div class="stat"><span class="sv">Grad-CAM</span><span class="sl">Visual Explainability</span></div>
+            </div>
+
+            <!-- Grid -->
+            <div class="grid">
+
+                <!-- ── UPLOAD CARD ── -->
+                <section class="card upload-card" id="upload-section">
+                    <div class="card-head">
+                        <div class="chip-icon blue">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="ch">Upload X-Ray Scan</h2>
+                            <p class="cs">JPG, PNG, BMP · High resolution recommended</p>
+                        </div>
+                    </div>
+
+                    <div class="drop-zone" id="drop-zone">
+                        <input type="file" id="file-input" hidden accept="image/*">
+                        <div class="dz-content">
+                            <div class="dz-icon">
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4-4 4 4"/></svg>
+                            </div>
+                            <p class="dz-title">Drop your X-ray here</p>
+                            <p class="dz-sub">or <span class="dz-link" id="browse-link">browse files</span> from your device</p>
+                        </div>
+                        <div class="dz-overlay">
+                            <span>📂 Release to upload</span>
+                        </div>
+                    </div>
+
+                    <div class="upload-badges">
+                        <div class="ubadge"><span>🔒</span> Local Processing</div>
+                        <div class="ubadge"><span>⚡</span> ~2s Results</div>
+                        <div class="ubadge"><span>🧠</span> Grad-CAM Enabled</div>
+                    </div>
+                </section>
+
+                <!-- ── RESULTS CARD ── -->
+                <section class="card results-card hidden" id="results-card">
+
+                    <!-- Loading Overlay -->
+                    <div class="loading-overlay hidden" id="loading-overlay">
+                        <div class="spinner"></div>
+                        <p>Analyzing scan...</p>
+                    </div>
+
+                    <!-- Diagnosis Hero -->
+                    <div class="diagnosis-hero" id="diagnosis-hero">
+                        <div class="dh-left">
+                            <div class="dh-label">PREDICTED DIAGNOSIS</div>
+                            <div class="dh-name" id="diagnosis-name">—</div>
+                        </div>
+                        <div class="dh-confidence">
+                            <svg width="64" height="64" id="conf-ring-svg" viewBox="0 0 64 64">
+                                <circle cx="32" cy="32" r="27" fill="none" stroke="#E2E8F0" stroke-width="6"/>
+                                <circle cx="32" cy="32" r="27" fill="none" stroke="#2563EB" stroke-width="6"
+                                    stroke-dasharray="169.6" stroke-dashoffset="169.6"
+                                    stroke-linecap="round" transform="rotate(-90 32 32)"
+                                    id="conf-ring"/>
+                            </svg>
+                            <span class="ring-pct" id="ring-pct">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Scan Comparison -->
+                    <div class="comparison">
+                        <div class="comp-panel">
+                            <div class="comp-label">
+                                <span class="dot gray-dot"></span> Original Scan
+                            </div>
+                            <div class="img-wrap">
+                                <img id="preview-img" src="" alt="X-Ray scan">
+                            </div>
+                        </div>
+                        <div class="comp-bridge">
+                            <div class="bridge-line"></div>
+                            <div class="bridge-chip">AI Focus →</div>
+                            <div class="bridge-line"></div>
+                        </div>
+                        <div class="comp-panel">
+                            <div class="comp-label">
+                                <span class="dot heat-dot"></span> Heatmap Analysis
+                            </div>
+                            <div class="img-wrap heatmap-wrap">
+                                <img id="heatmap-img" src="" alt="Grad-CAM heatmap">
+                                <div class="heatmap-legend">
+                                    <span class="leg-item"><span class="leg-dot hot"></span>High</span>
+                                    <span class="leg-item"><span class="leg-dot warm"></span>Mid</span>
+                                    <span class="leg-item"><span class="leg-dot cold"></span>Low</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confidence Bar -->
+                    <div class="conf-section">
+                        <div class="conf-row">
+                            <span class="conf-lbl">Overall Confidence</span>
+                            <span class="conf-pct" id="confidence-val">—</span>
+                        </div>
+                        <div class="conf-track">
+                            <div class="conf-fill" id="confidence-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Class Breakdown -->
+                    <div class="breakdown" id="full-analysis"></div>
+
+                    <!-- Footer Disclaimer -->
+                    <div class="inline-disclaimer">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        AI-assisted result only — verify with a certified radiologist before clinical decisions.
+                    </div>
+
+                    <button class="btn-reset" onclick="resetApp()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.48"/></svg>
+                        Scan New Image
+                    </button>
+                </section>
+
+                <!-- ── SYSTEM CARD ── -->
+                <section class="card system-card" id="status-card">
+                    <div class="card-head">
+                        <div class="chip-icon purple">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="ch">System Readiness</h2>
+                            <p class="cs">All diagnostics operational</p>
+                        </div>
+                    </div>
+
+                    <ul class="checks">
+                        <li><span class="ck">✓</span> ResNet50 Model Loaded & Warmed Up</li>
+                        <li><span class="ck">✓</span> Grad-CAM Engine Active</li>
+                        <li><span class="ck">✓</span> Image Preprocessing Pipeline Ready</li>
+                        <li><span class="ck">✓</span> 4-Class Softmax Classifier Initialized</li>
+                    </ul>
+
+                    <div class="how-it-works">
+                        <p class="hw-title">HOW IT WORKS</p>
+                        <div class="hw-step"><span class="hw-num">1</span><span>Upload a chest X-ray image</span></div>
+                        <div class="hw-step"><span class="hw-num">2</span><span>AI preprocesses (224×224, normalized)</span></div>
+                        <div class="hw-step"><span class="hw-num">3</span><span>ResNet50 runs 4-class inference</span></div>
+                        <div class="hw-step"><span class="hw-num">4</span><span>Grad-CAM visualizes AI attention regions</span></div>
+                        <div class="hw-step"><span class="hw-num">5</span><span>Consult physician for final decision</span></div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
