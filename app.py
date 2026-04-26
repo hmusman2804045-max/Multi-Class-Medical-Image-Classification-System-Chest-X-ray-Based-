@@ -5,20 +5,32 @@ import numpy as np
 import tensorflow as tf
 from flask import Flask, request, jsonify, render_template
 from PIL import Image
+from huggingface_hub import hf_hub_download
 
 app = Flask(__name__)
 
-MODEL_PATH = "models/medical_resnet_v1.h5"
+HF_MODEL_REPO = "usman-ai-dev/healthscan-model"
+MODEL_FILENAME = "medical_resnet_v1.h5"
+LOCAL_MODEL_PATH = "models/medical_resnet_v1.h5"
 IMAGE_SIZE = (224, 224)
 CLASS_NAMES = ['covid', 'normal', 'pneumonia', 'tuberculosis']
 LAST_CONV_LAYER = "conv5_block3_out"
 UPLOAD_FOLDER = 'static/uploads'
 
-print(f"--- [BACKEND] Loading AI Brain from {MODEL_PATH} ---")
-if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(f"Model file not found at {MODEL_PATH}. Run training first!")
+os.makedirs("models", exist_ok=True)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-model = tf.keras.models.load_model(MODEL_PATH)
+if not os.path.exists(LOCAL_MODEL_PATH):
+    print(f"--- [BACKEND] Model not found locally. Downloading from HuggingFace Hub... ---")
+    LOCAL_MODEL_PATH = hf_hub_download(
+        repo_id=HF_MODEL_REPO,
+        filename=MODEL_FILENAME,
+        local_dir="models"
+    )
+    print(f"--- [BACKEND] Model downloaded to {LOCAL_MODEL_PATH} ---")
+
+print(f"--- [BACKEND] Loading AI Brain from {LOCAL_MODEL_PATH} ---")
+model = tf.keras.models.load_model(LOCAL_MODEL_PATH)
 print("--- [BACKEND] AI Brain is loaded. Running wake-up scan... ---")
 
 dummy_input = np.zeros((1, 224, 224, 3))
@@ -121,4 +133,4 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=7860)

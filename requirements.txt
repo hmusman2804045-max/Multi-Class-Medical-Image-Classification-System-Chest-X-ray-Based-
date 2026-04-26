@@ -1,6 +1,7 @@
-tensorflow>=2.10.0
+flask
+tensorflow==2.15.0
 numpy
-matplotlib
-seaborn
-scikit-learn
-pandas
+pillow
+opencv-python-headless
+gunicorn
+huggingface_hub
