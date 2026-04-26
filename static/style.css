@@ -476,3 +476,14 @@ a { text-decoration:none; }
     }
     .bridge-line { height: 1px; min-height: auto; width: 30px; }
 }
+
+
+/* Creator Credit Base Style */
+.creator-credit {
+    margin-top: 1.5rem; text-align: center; font-size: 0.65rem; color: var(--txt-muted); font-weight: 600; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+}
+
+/* Make sure it aligns with logo on mobile */
+@media (max-width: 768px) {
+    .creator-credit { margin-top: 0; }
+}
