@@ -1,11 +1,16 @@
 # Multi-Class Medical Image Classification System (Chest X-ray Based)
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-HealthScan_AI-2563EB?style=for-the-badge&logo=huggingface&logoColor=white)](https://usman-ai-dev-healthscan-ai.hf.space)
+
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.12-blue.svg)
 ![Accuracy](https://img.shields.io/badge/accuracy-80.57%25-green.svg)
 ![TensorFlow](https://img.shields.io/badge/tensorflow-2.15%2B-orange.svg)
 ![Flask](https://img.shields.io/badge/flask-3.1-lightgrey.svg)
 ![Status](https://img.shields.io/badge/status-production--ready-brightgreen.svg)
+
+## Live Demo 🌐
+**Test the fully deployed AI diagnostic system here:** 👉 [HealthScan AI Portal](https://usman-ai-dev-healthscan-ai.hf.space)
 
 ## Overview
 A full-stack, production-ready AI diagnostic system that classifies Chest X-rays into four categories: **COVID-19, Normal, Pneumonia, and Tuberculosis**. Built on a fine-tuned **ResNet50** backbone and served through a professional **Flask web dashboard** with real-time **Grad-CAM visual explainability**.
