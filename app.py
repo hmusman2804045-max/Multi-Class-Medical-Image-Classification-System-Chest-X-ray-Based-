@@ -138,7 +138,7 @@ def predict():
             similarity = 1 - cosine(features.flatten(), golden_reference)
             print(f"--- [SECURITY] Image Similarity Score: {similarity:.4f} ---")
             
-            if similarity < 0.70: # 70% similarity threshold
+            if similarity < 0.90: # 90% strict similarity threshold
                 print("--- [SECURITY] Image REJECTED! Not a valid X-ray. ---")
                 return jsonify({"error": "Security Check Failed: The uploaded image does not appear to be a valid Chest X-ray. Please upload a medical scan."}), 400
 
