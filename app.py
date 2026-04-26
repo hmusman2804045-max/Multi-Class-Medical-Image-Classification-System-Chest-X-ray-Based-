@@ -2,6 +2,7 @@ import os
 import io
 import cv2
 import numpy as np
+from scipy.spatial.distance import cosine
 import tensorflow as tf
 from flask import Flask, request, jsonify, render_template
 from PIL import Image
@@ -31,6 +32,29 @@ if not os.path.exists(LOCAL_MODEL_PATH):
 
 print(f"--- [BACKEND] Loading AI Brain from {LOCAL_MODEL_PATH} ---")
 model = tf.keras.models.load_model(LOCAL_MODEL_PATH)
+
+print("--- [BACKEND] Setting up Security Check (OOD Detection) ---")
+try:
+    golden_reference = np.load("models/xray_reference.npy")
+    pooling_layer_name = None
+    for layer in model.layers:
+        if isinstance(layer, tf.keras.layers.GlobalAveragePooling2D):
+            pooling_layer_name = layer.name
+            break
+            
+    if pooling_layer_name:
+        feature_extractor = tf.keras.models.Model(
+            inputs=model.inputs,
+            outputs=model.get_layer(pooling_layer_name).output
+        )
+        print("--- [BACKEND] Security Check Active. ---")
+    else:
+        raise ValueError("Could not find GlobalAveragePooling2D layer")
+except Exception as e:
+    print(f"--- [WARNING] Security Check setup failed: {e}. System will run without OOD detection. ---")
+    golden_reference = None
+    feature_extractor = None
+
 print("--- [BACKEND] AI Brain is loaded. Running wake-up scan... ---")
 
 dummy_input = np.zeros((1, 224, 224, 3))
@@ -108,6 +132,17 @@ def predict():
         img_bytes = file.read()
         processed_img = preprocess_image(img_bytes)
 
+        # 1. SECURITY CHECK (Out-of-Distribution Detection)
+        if golden_reference is not None and feature_extractor is not None:
+            features = feature_extractor.predict(processed_img, verbose=0)
+            similarity = 1 - cosine(features.flatten(), golden_reference)
+            print(f"--- [SECURITY] Image Similarity Score: {similarity:.4f} ---")
+            
+            if similarity < 0.70: # 70% similarity threshold
+                print("--- [SECURITY] Image REJECTED! Not a valid X-ray. ---")
+                return jsonify({"error": "Security Check Failed: The uploaded image does not appear to be a valid Chest X-ray. Please upload a medical scan."}), 400
+
+        # 2. INFERENCE
         predictions = model.predict(processed_img)
         pred_idx = np.argmax(predictions[0])
         confidence = float(predictions[0][pred_idx])

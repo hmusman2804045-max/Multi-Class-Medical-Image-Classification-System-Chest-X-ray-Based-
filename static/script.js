@@ -68,8 +68,27 @@ async function handleUpload(file) {
     } catch (err) {
         console.error(err);
         loadingOverlay.classList.add('hidden');
-        diagnosisName.innerText = 'Error';
-        alert('Inference failed: ' + err.message);
+        
+        // Hide normal results elements
+        document.querySelector('.dh-confidence').style.display = 'none';
+        document.querySelector('.comparison').style.display = 'none';
+        document.querySelector('.conf-section').style.display = 'none';
+        fullAnalysis.style.display = 'none';
+        
+        // Display Error elegantly
+        diagnosisHero.className = 'diagnosis-hero';
+        diagnosisHero.style.backgroundColor = '#FEF2F2';
+        diagnosisHero.style.border = '1px solid #FCA5A5';
+        
+        diagnosisName.className = 'dh-name';
+        diagnosisName.style.color = '#DC2626';
+        diagnosisName.style.fontSize = '1.1rem';
+        diagnosisName.style.lineHeight = '1.4';
+        diagnosisName.style.whiteSpace = 'normal';
+        diagnosisName.innerText = err.message;
+        
+        document.querySelector('.dh-label').innerText = 'SECURITY ALERT';
+        document.querySelector('.dh-label').style.color = '#B91C1C';
     }
 }
 
@@ -115,6 +134,22 @@ function resetDiagnosisHero() {
     diagnosisHero.className = 'diagnosis-hero';
     diagnosisName.className = 'dh-name';
     diagnosisName.innerText = '—';
+    
+    // Restore any overridden error styles
+    diagnosisHero.style.backgroundColor = '';
+    diagnosisHero.style.border = '';
+    diagnosisName.style.color = '';
+    diagnosisName.style.fontSize = '';
+    diagnosisName.style.lineHeight = '';
+    diagnosisName.style.whiteSpace = '';
+    
+    document.querySelector('.dh-label').innerText = 'PREDICTED DIAGNOSIS';
+    document.querySelector('.dh-label').style.color = '';
+    
+    document.querySelector('.dh-confidence').style.display = '';
+    document.querySelector('.comparison').style.display = '';
+    document.querySelector('.conf-section').style.display = '';
+    fullAnalysis.style.display = '';
 }
 
 function resetApp() {
