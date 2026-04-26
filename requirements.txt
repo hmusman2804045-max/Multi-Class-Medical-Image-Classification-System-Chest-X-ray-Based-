@@ -1,7 +1,8 @@
 flask
-tensorflow==2.15.0
+tensorflow-cpu
 numpy
 pillow
 opencv-python-headless
 gunicorn
 huggingface_hub
+scipy
